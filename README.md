@@ -8,7 +8,7 @@ An interactive, self-paced English course for upper-intermediate learners. The i
 
 The course is divided into B2.1 and B2.2, with 16 grammar modules and seven vocabulary modules. Each grammar lesson includes a visual explanation, affirmative (+), negative (−) and question (?) examples, common English sentence patterns, quick checks, vocabulary, interactive practice, a short reading and speaking prompts.
 
-Every lesson is written in English. Grammar practice includes the main lesson exercises and extra form-focused questions.
+Every lesson is written in English. Grammar practice includes the main lesson exercises and extra form-focused questions. The past-tense lesson adds a grouped reference table of common irregular verbs, practice questions, a visual timeline and the three pronunciations of regular -ed endings, with American English audio.
 
 ### Grammar
 
@@ -45,6 +45,7 @@ Theory also includes an English sentence toolkit covering statements, negatives,
 
 - Interactive multiple-choice, gap-fill, word-order, and vocabulary practice
 - Reading comprehension and text-to-speech audio
+- American English speech output and speech-recognition language
 - Speaking prompts with optional browser speech recognition
 - XP, daily streaks, module results, and a course test
 - Open-access and progressive-unlock modes
@@ -71,6 +72,7 @@ js/app.js             Navigation, practice, progress and browser audio
 data/levels.js        Course level metadata
 data/grammar.js       Core B2.1 and B2.2 grammar modules
 data/grammar-extension.js Additional grammar modules and form-focused practice
+data/irregular-verbs.js  Past-tense irregular verb reference and practice
 data/vocabulary.js    Seven vocabulary modules split across B2.1 and B2.2
 assets/img/           App icon and course illustrations
 ```

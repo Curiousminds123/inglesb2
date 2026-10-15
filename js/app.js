@@ -75,7 +75,9 @@
     }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(String(text).replace(/\s+/g, " "));
-    utterance.lang = "en-GB";
+    const americanVoice = window.speechSynthesis.getVoices().find(voice => /^en-US(?:-|$)/i.test(voice.lang));
+    utterance.lang = "en-US";
+    if (americanVoice) utterance.voice = americanVoice;
     utterance.rate = rate || (S.slow ? 0.75 : 0.95);
     window.speechSynthesis.speak(utterance);
   }
@@ -230,6 +232,9 @@
       };
       $("#allv").onclick = () => say(module.voc.map(item => item[1]).join(". "));
     }
+    if (tab === "theory") {
+      $$("[data-say]").forEach(button => button.onclick = () => say(button.dataset.say));
+    }
     if (tab === "reading") bindReading(module);
     if (tab === "speaking") bindSpeaking(module);
     if (tab === "practice") bindPractice();
@@ -278,7 +283,62 @@
     const formPractice = module.forms && Array.isArray(module.forms.practice) && module.forms.practice.length
       ? `<section class="form-practice card"><div class="theory-kicker">Quick check</div><h2>Try the + / − / ? forms</h2><div class="form-drills">${module.forms.practice.map((item, index) => `<details class="form-drill"><summary><span>${index + 1}</span>${esc(item.q)}</summary><p class="drill-answer"><b>Answer:</b> ${esc(Array.isArray(item.a) ? item.a[0] : item.a)}<br><span>${esc(item.t)}</span></p></details>`).join("")}</div></section>`
       : "";
-    return `${module.th}${formCards}${module.k === "g" ? sentenceTypes : ""}${formPractice}<div class="row">${nextButton(module, "theory")}<button class="btn sec" data-go="#/m/${module.id}/practice">🎯 Practise now</button></div>`;
+    const irregularPast = module.irregular ? irregularPastTheory(module.irregular) : "";
+    return `${module.th}${module.k === "g" ? grammarVisual(module) : ""}${formCards}${module.k === "g" ? sentenceTypes : ""}${irregularPast}${formPractice}<div class="row">${nextButton(module, "theory")}<button class="btn sec" data-go="#/m/${module.id}/practice">🎯 Practise now</button></div>`;
+  }
+  function grammarVisual(module) {
+    if (module.id !== "b2-present-perfect") return "";
+    return `
+      <section class="past-simple-visual card">
+        <div class="theory-kicker">Past simple · at a glance</div>
+        <h2>Finished action, finished time</h2>
+        <div class="timeline" aria-label="Past events happen before the present">
+          <div class="timeline-event"><span>PAST</span><b>The meeting ended</b><small>yesterday · last week · in 2022 · two hours ago</small></div>
+          <div class="timeline-line"><i></i><span>NOW</span></div>
+        </div>
+        <div class="past-forms">
+          <article class="past-form past-affirmative"><span>+</span><div><b>Subject + past form</b><p>They <strong>visited</strong> the museum.</p><small>Regular: verb + -ed · Irregular: learn the V2 form</small></div></article>
+          <article class="past-form past-negative"><span>−</span><div><b>Subject + didn't + base verb</b><p>They <strong>didn't visit</strong> the museum.</p><small>After <i>didn't</i>, always use the base verb.</small></div></article>
+          <article class="past-form past-question"><span>?</span><div><b>Did + subject + base verb?</b><p><strong>Did</strong> they <strong>visit</strong> the museum?</p><small>Short answers: Yes, they did. / No, they didn't.</small></div></article>
+        </div>
+        <div class="be-forms"><b>Special verb: BE</b><span>I / he / she / it <strong>was</strong></span><span>you / we / they <strong>were</strong></span><span>Negative: <strong>wasn't / weren't</strong></span><span>Question: <strong>Was / Were + subject?</strong></span></div>
+        <div class="ed-pronunciation">
+          <div class="theory-kicker">Regular past · the three -ed sounds</div>
+          <h2>Pronunciation depends on the final <em>sound</em></h2>
+          <p class="muted">The spelling is always <b>-ed</b>, but the ending has three pronunciations. Listen to the examples in an American English voice.</p>
+          <div class="ed-sound-grid">
+            <article class="ed-sound ed-t"><span class="ipa">/t/</span><h3>Voiceless sound → /t/</h3><p>After a voiceless sound such as /p/, /k/, /f/, /s/, /ʃ/ or /tʃ/. Do not add a syllable.</p><b>worked · watched · laughed</b><small>/wɝkt/ · /wɑtʃt/ · /læft/</small><button class="sound-button" data-say="worked, watched, laughed">🔊 Listen</button></article>
+            <article class="ed-sound ed-d"><span class="ipa">/d/</span><h3>Voiced sound → /d/</h3><p>After a vowel or voiced consonants such as /b/, /g/, /v/, /z/, /m/, /n/, /l/ or /r/, except /d/. Touch your throat to feel the vibration; do not add a syllable.</p><b>played · cleaned · called</b><small>/pleɪd/ · /klind/ · /kɔld/</small><button class="sound-button" data-say="played, cleaned, called">🔊 Listen</button></article>
+            <article class="ed-sound ed-id"><span class="ipa">/ɪd/</span><h3>Final /t/ or /d/ → /ɪd/</h3><p>Only after the sounds /t/ or /d/. This is the only -ed ending that adds a syllable.</p><b>wanted · needed · decided</b><small>/ˈwɑntɪd/ · /ˈnidɪd/ · /dɪˈsaɪdɪd/</small><button class="sound-button" data-say="wanted, needed, decided">🔊 Listen</button></article>
+          </div>
+          <div class="ed-spelling"><b>Spelling the regular past:</b><span>work → work<strong>ed</strong> <small>(most verbs: +ed)</small></span><span>live → liv<strong>ed</strong> <small>(final e: +d)</small></span><span>carry → carr<strong>ied</strong> <small>(consonant + y: y → ied)</small></span><span>stop → stopp<strong>ed</strong> <small>(short vowel + consonant: double it)</small></span></div>
+          <div class="tip"><b>Quick test:</b> say the verb without <i>-ed</i> and listen to its final sound, not its final letter. <i>Fix</i> ends in /s/ → fixed /t/. <i>Play</i> ends in a vowel sound → played /d/. <i>Start</i> ends in /t/ → started /ɪd/.</div>
+        </div>
+      </section>`;
+  }
+  function irregularPastTheory(irregular) {
+    const groups = irregular.groups.map((group, index) => `
+      <details class="irregular-group" ${index === 0 ? "open" : ""}>
+        <summary><span class="group-index">${String(index + 1).padStart(2, "0")}</span><span><b>${esc(group.title)}</b><small>${esc(group.note)}</small></span><span class="group-count">${group.verbs.length} verbs</span></summary>
+        <div class="irregular-table-wrap"><table class="irregular-table"><thead><tr><th>Base form</th><th>Past simple (V2)</th><th>Past participle (V3)</th><th>Meaning</th></tr></thead><tbody>${group.verbs.map(([base, past, participle, meaning]) => `<tr><td>${esc(base)}</td><td><b>${esc(past)}</b></td><td>${esc(participle)}</td><td>${esc(meaning)}</td></tr>`).join("")}</tbody></table></div>
+      </details>`).join("");
+    return `
+      <section class="irregular-lesson card">
+        <div class="theory-kicker">Irregular verb master list</div>
+        <h2>Past simple irregular verbs</h2>
+        <p class="muted">Irregular verbs do not make the past simple with <i>-ed</i>. Learn V1 (base), V2 (past simple) and V3 (past participle). These tables group ${irregular.groups.reduce((total, group) => total + group.verbs.length, 0)} common irregular verbs by their form patterns. Alternative British and American forms are shown where they are commonly used.</p>
+        <div class="verb-key"><span><b>V1</b> base form</span><span><b>V2</b> past simple</span><span><b>V3</b> past participle (used with <i>have/has/had</i>)</span><span><b>US note:</b> <i>gotten</i> is the usual American past participle of <i>get</i>.</span></div>
+        <div class="irregular-groups">${groups}</div>
+        <div class="tip"><b>Important:</b> use V2 after <i>did / didn't</i> only as the main verb in an affirmative sentence (<i>She went</i>). After <i>did / didn't</i>, use V1 (<i>Did she go?</i> / <i>She didn't go</i>). Use V3 after <i>have / has / had</i> (<i>She has gone</i>).</div>
+        <h2 class="classification-heading">How to classify irregular verbs</h2>
+        <div class="verb-class-grid">
+          <article><span>TYPE 1</span><b>All three forms are the same</b><p>V1 = V2 = V3</p><i>cut – cut – cut · put – put – put</i></article>
+          <article><span>TYPE 2</span><b>Past simple = past participle</b><p>V2 = V3</p><i>buy – bought – bought · teach – taught – taught</i></article>
+          <article><span>TYPE 3</span><b>All three forms are different</b><p>V1 ≠ V2 ≠ V3</p><i>begin – began – begun · write – wrote – written</i></article>
+          <article><span>TYPE 4</span><b>Same vowel-change families</b><p>Remember the sound pattern</p><i>sing – sang – sung · drive – drove – driven</i></article>
+        </div>
+        <div class="tip"><b>There is no single rule</b> that predicts every irregular form. Learn them in pattern groups, say them aloud, and practise V2 and V3 in complete sentences.</div>
+      </section>`;
   }
   function vocabulary(module) {
     return `<p class="muted">Tap a card to hear the word or phrase and reveal its definition.</p><div class="row"><button class="btn sec small" id="allv">🔊 Hear all</button><button class="btn sec small" id="flipall">🔄 Flip all</button></div><div class="vgrid">${module.voc.map((item, index) => `<button class="vcard" data-i="${index}" aria-label="${esc(item[1])}"><div class="vin"><div class="vf"><span class="e">${item[0]}</span><span class="w">${esc(item[1])}</span></div><div class="vb"><span class="e" style="font-size:30px">${item[0]}</span>${esc(item[2])}</div></div></button>`).join("")}</div><div class="row">${nextButton(module, "vocabulary")}</div>`;
@@ -289,6 +349,9 @@
       : Array.isArray(item.o) ? { ...item, type: "choice" } : { ...item, type: "fill" });
     if (module.forms && Array.isArray(module.forms.practice)) {
       module.forms.practice.forEach(item => questions.push({ ...item, type: "fill" }));
+    }
+    if (module.irregular && Array.isArray(module.irregular.practice)) {
+      module.irregular.practice.forEach(item => questions.push({ ...item, type: Array.isArray(item.o) ? "choice" : "fill" }));
     }
     const vocab = shuffle(module.voc);
     [vocab[0], vocab[1]].forEach(item => {
@@ -485,7 +548,7 @@
       }
       if (recognition) { recognition.stop(); recognition = null; return; }
       recognition = new SpeechRecognition();
-      recognition.lang = "en-GB";
+      recognition.lang = "en-US";
       recognition.interimResults = true;
       recognition.onresult = event => {
         $("#speechResult").innerHTML = `<div class="heard">${esc(Array.from(event.results).map(result => result[0].transcript).join(""))}</div>`;
@@ -556,7 +619,7 @@
     };
   }
   function settings() {
-    main().innerHTML = `<h1>Settings</h1><div class="card"><h2>Course access</h2><p>Choose how modules unlock. Grammar and vocabulary progress independently.</p><div class="modes"><button class="mode ${S.mode === "open" ? "sel" : ""}" id="openMode"><span class="e">🔓</span><b>Open access</b><span>All modules are available immediately.</span></button><button class="mode ${S.mode === "prog" ? "sel" : ""}" id="progressiveMode"><span class="e">🔒</span><b>Progressive</b><span>Complete each module to unlock the next one in its section.</span></button></div></div><div class="card"><h2>Audio</h2><label><input type="checkbox" id="slowVoice" ${S.slow ? "checked" : ""}> Speak more slowly</label><p class="muted">Audio uses the speech voices installed in your browser and device.</p></div><div class="card"><h2>Reset progress</h2><p>This removes saved XP, module results, test scores and streak data from this browser.</p><button class="btn red" id="resetProgress">Reset all progress</button></div>`;
+    main().innerHTML = `<h1>Settings</h1><div class="card"><h2>Course access</h2><p>Choose how modules unlock. Grammar and vocabulary progress independently.</p><div class="modes"><button class="mode ${S.mode === "open" ? "sel" : ""}" id="openMode"><span class="e">🔓</span><b>Open access</b><span>All modules are available immediately.</span></button><button class="mode ${S.mode === "prog" ? "sel" : ""}" id="progressiveMode"><span class="e">🔒</span><b>Progressive</b><span>Complete each module to unlock the next one in its section.</span></button></div></div><div class="card"><h2>Audio</h2><label><input type="checkbox" id="slowVoice" ${S.slow ? "checked" : ""}> Speak more slowly</label><p class="muted">Speech is set to American English (en-US). Your browser's installed en-US voice is used when available; the voice itself depends on your device.</p></div><div class="card"><h2>Reset progress</h2><p>This removes saved XP, module results, test scores and streak data from this browser.</p><button class="btn red" id="resetProgress">Reset all progress</button></div>`;
     $("#openMode").onclick = () => { S.mode = "open"; save(); route(); };
     $("#progressiveMode").onclick = () => { S.mode = "prog"; save(); route(); };
     $("#slowVoice").onchange = event => { S.slow = event.target.checked; save(); };
