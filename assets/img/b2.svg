@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="B2 level badge">
+  <circle cx="50" cy="50" r="46" fill="#ddf4ff"/>
+  <circle cx="50" cy="50" r="37" fill="#176b87"/>
+  <text x="50" y="61" fill="#fff" font-family="Arial, sans-serif" font-size="31" font-weight="700" text-anchor="middle">B2</text>
+  <path d="M23 82h54" stroke="#115367" stroke-linecap="round" stroke-width="6"/>
+</svg>
