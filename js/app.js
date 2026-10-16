@@ -246,7 +246,7 @@
   function theory(module) {
     const formCards = module.forms ? `
       <section class="grammar-forms card" aria-labelledby="forms-title">
-        <div class="theory-kicker">Sentence builder</div>
+        <div class="theory-kicker"><span aria-hidden="true">🧩</span> Sentence builder</div>
         <h2 id="forms-title">Build the three core forms</h2>
         <p class="muted">Compare the word order in affirmative statements, negatives and questions.</p>
         <div class="forms-grid">
@@ -254,29 +254,29 @@
             ["positive", "+", "Affirmative", "form-positive"],
             ["negative", "−", "Negative", "form-negative"],
             ["question", "?", "Question", "form-question"]
-          ].map(([key, symbol, label, className]) => `<article class="form-card ${className}"><span class="form-symbol">${symbol}</span><div><h3>${label}</h3><p>${esc(module.forms[key] || "")}</p></div></article>`).join("")}
+          ].map(([key, symbol, label, className]) => `<article class="form-card ${className}"><span class="form-symbol" aria-hidden="true">${symbol}</span><div class="form-copy"><span class="form-label">Core form</span><h3>${label}</h3><p>${esc(module.forms[key] || "")}</p></div></article>`).join("")}
         </div>
-        <p class="form-hint"><b>Check the auxiliary:</b> in questions, the auxiliary usually comes before the subject; in negatives, add <i>not</i> after the first auxiliary.</p>
+        <p class="form-hint"><span aria-hidden="true">💡</span> <b>Check the auxiliary:</b> in questions, the auxiliary usually comes before the subject; in negatives, add <i>not</i> after the first auxiliary.</p>
       </section>` : "";
     const sentenceTypes = `
       <section class="sentence-toolkit card">
-        <div class="theory-kicker">English sentence toolkit</div>
+        <div class="theory-kicker"><span aria-hidden="true">🧭</span> English sentence toolkit</div>
         <h2>Common sentence types and word order</h2>
         <p class="muted">These patterns help you turn a statement into a question, add emphasis or connect ideas naturally.</p>
         <div class="sentence-grid">
           ${[
-            ["Statement", "Subject + verb + complement", "The team has completed the project."],
-            ["Negative statement", "Subject + auxiliary + not + verb", "The team hasn't completed the project."],
-            ["Yes / no question", "Auxiliary + subject + main verb?", "Has the team completed the project?"],
-            ["Wh- question", "Question word + auxiliary + subject + verb?", "When has the team completed a project?"],
-            ["Subject question", "Who / what + verb + complement?", "Who completed the project?"],
-            ["Indirect question", "Introductory phrase + subject + verb", "Could you tell me when the team completed it?"],
-            ["Question tag", "Statement + opposite auxiliary + pronoun?", "They've finished, haven't they?"],
-            ["Imperative", "Base verb (+ object)", "Please send the final version today."],
-            ["Suggestion", "Why don't we / Let's + base verb", "Why don't we review the figures together?"],
-            ["Exclamation", "What a/an + adjective + noun! / How + adjective!", "What a brilliant idea! / How useful!"],
-            ["Conditional", "If-clause + result clause", "If we finish early, we'll check the final draft."]
-          ].map(([label, pattern, example]) => `<article class="sentence-card"><h3>${label}</h3><p class="sentence-pattern">${pattern}</p><p class="sentence-example">${example}</p></article>`).join("")}
+            ["statement", "📣", "Make a statement", "Statement", "Subject + verb + complement", "The team has completed the project."],
+            ["statement", "🚫", "Make it negative", "Negative statement", "Subject + auxiliary + not + verb", "The team hasn't completed the project."],
+            ["question", "🔵", "Ask a yes / no question", "Yes / no question", "Auxiliary + subject + main verb?", "Has the team completed the project?"],
+            ["question", "🔎", "Ask for information", "Wh- question", "Question word + auxiliary + subject + verb?", "When did the team complete the project?"],
+            ["question", "🙋", "Ask about the subject", "Subject question", "Who / what + verb + complement?", "Who completed the project?"],
+            ["question", "💬", "Ask indirectly", "Indirect question", "Introductory phrase + subject + verb", "Could you tell me when the team completed it?"],
+            ["question", "🏷️", "Check or confirm", "Question tag", "Statement + opposite auxiliary + pronoun?", "They've finished, haven't they?"],
+            ["action", "👉", "Give an instruction", "Imperative", "Base verb (+ object)", "Please send the final version today."],
+            ["action", "🤝", "Make a suggestion", "Suggestion", "Why don't we / Let's + base verb", "Why don't we review the figures together?"],
+            ["reaction", "✨", "Show a reaction", "Exclamation", "What a/an + adjective + noun! / How + adjective!", "What a brilliant idea! / How useful!"],
+            ["connect", "🔀", "Connect a condition and result", "Conditional", "If-clause + result clause", "If we finish early, we'll check the final draft."]
+          ].map(([group, icon, category, label, pattern, example], index) => `<article class="sentence-card sentence-${group}"><div class="sentence-mark" aria-hidden="true">${icon}</div><div class="sentence-content"><div class="sentence-meta"><span>${category}</span><span>${String(index + 1).padStart(2, "0")}</span></div><h3>${label}</h3><p class="sentence-pattern">${pattern.split(/(\s+\+\s+|\s+\/\s+)/).map(part => part.trim() === "+" || part.trim() === "/" ? `<span class="pattern-join">${esc(part.trim())}</span>` : `<span class="pattern-part">${esc(part.trim())}</span>`).join("")}</p><p class="sentence-example"><span>Example</span>${esc(example)}</p></div></article>`).join("")}
         </div>
         <div class="tip"><b>Indirect questions:</b> use statement word order after the opening phrase: <i>Do you know where the station is?</i> (not <i>where is the station</i>).</div>
       </section>`;
